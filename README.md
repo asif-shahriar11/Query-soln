@@ -36,25 +36,25 @@ b. Print the total salary of an employee for 5 years and 6 months period. Print 
 names along with this salary information. Use NVL function assuming that salary may
 contain NULL values
 
-```
+```js
 SELECT FIRST_NAME, (SALARY * 66 + SALARY * 66 * NVL(COMISSION_PCT, 0)) "Salary"
 FROM employees;
 ```
 
 ### Note: Converting date
 
-Expression                               Output
-TO_CHAR(HIRE_DATE, ‘DD/MM/YYYY’)         ‘31/01/1995’
-TO_CHAR(HIRE_DATE, ‘MONTH DD, YYYY’)     ‘JANUARY 31, 1995’
-TO_CHAR(HIRE_DATE, ‘MONTH DD, YEAR’)     ‘JANUARY 31, NINETEEN HUNDRED AND NINETY FIVE'
-TO_CHAR(HIRE_DATE, ‘Ddspth Month, YEAR’) ‘Thirty-First January, Nineteen hundred and ninety five’
-TO_CHAR(123456)                          ‘123456’
+
+TO_CHAR(HIRE_DATE, ‘DD/MM/YYYY’)    ->     ‘31/01/1995’;
+TO_CHAR(HIRE_DATE, ‘MONTH DD, YYYY’)   ->  ‘JANUARY 31, 1995’;
+TO_CHAR(HIRE_DATE, ‘MONTH DD, YEAR’)  ->   ‘JANUARY 31, NINETEEN HUNDRED AND NINETY FIVE';
+TO_CHAR(HIRE_DATE, ‘Ddspth Month, YEAR’) -> ‘Thirty-First January, Nineteen hundred and ninety five’;
+TO_CHAR(123456)            ->              ‘123456’;
 
 ### 3.5
 
 Example. Finds all employee last names who was hired before 1st January 1997.
 
-```
+```js
 SELECT LAST_NAME, TO_CHAR(HIRE_DATE, 'DD-MON-YYYY') "Hire Date"
 FROM employees
 WHERE HIRE_DATE < TO_DATE('01-JAN-1997', 'DD-MON-YYYY')
@@ -65,14 +65,14 @@ a. Print hire dates of all employees in the following formats:
 (i) 13th February, 1998 (ii) 13 February, 1998.
 
 i.
-```
+```js
 SELECT LAST_NAME, TO_CHAR(HIRE_DATE,'ddth Month, YYYY') "Hire Date"
 FROM employees
 ORDER BY HIRE_DATE ASC;
 ```
 
 ii.
-```
+```js
 SELECT LAST_NAME, TO_CHAR(HIRE_DATE,'dd Month, YYYY') "Hire Date"
 FROM employees
 ORDER BY HIRE_DATE ASC;
