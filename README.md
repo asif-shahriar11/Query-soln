@@ -206,7 +206,7 @@ ORDER BY YEAR ASC, JOB_ID ASC;
 
 
 
-## Chapter 05: Joim
+## Chapter 5: Join
 
 ### 5.1
 
@@ -238,7 +238,7 @@ GROUP BY E1.EMPLOYEE_ID, E1.LAST_NAME
 ORDER BY NAME;
 ```
 
-Example 4. JOINing more than two tables.
+Example 4. Joining more than two tables.
 
 ```js
 SELECT E.LAST_NAME, D.DEPARTMENT_NAME, L.CITY
