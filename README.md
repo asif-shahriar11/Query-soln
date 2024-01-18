@@ -163,8 +163,6 @@ HAVING avg_salary <= 50000;
 
 ### 4.3
 
-#### Examples
-
 Example 1. Find the total employees hired in each year.
 
 ```js
