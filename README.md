@@ -7,7 +7,7 @@
 a. For all employees, find the number of years employed. Print first names and number of years
 employed for each employee.
 
-```
+```js
 SELECT FIRST_NAME, MONTHS_BETWEEN((SYSDATE – HIRE_DATE)) / 12 “Years employed”
 FROM employees;
 
@@ -15,8 +15,7 @@ FROM employees;
 
 b. Suppose you need to find the number of days each employee worked during the first month
 of his joining. Write an SQL query to find this information for all employees
-
-```
+```js
 SELECT FIRST_NAME, 30 - EXTRACT(DAY FROM HIRE_DATE) "Days Worked in First Month"
 FROM employees;
 
@@ -26,7 +25,7 @@ FROM employees;
 
 a. Print the commission_pct values of all employees whose commission is at least 20%. Use NVL function.
 
-```
+```js
 SELECT FIRST_NAME, COMISSION_PCT
 FROM employees
 WHERE NVL(COMISSION_PCT, 0) >= 0.2;
