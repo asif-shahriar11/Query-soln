@@ -284,7 +284,7 @@ d. For each employee, finds the number of job switches of the employee.
 ```sql
 SELECT 			E.LAST_NAME, COUNT(J.JOB_ID) ""Job switches"
 FROM 			employees E
-LEFT OUTER JOIN job_history J ON (E.EMPLOYEE_ID = J.EMPLOYEE_ID)
+LEFT OUTER JOIN 	job_history J ON (E.EMPLOYEE_ID = J.EMPLOYEE_ID)
 GROUP BY 		E.EMPLOYEE_ID, E.LAST_NAME;
 ```
 
@@ -292,12 +292,12 @@ e. For each department and job types, find the total number of employees working
 department names, job titles, and total employees working.
 
 ```sql
-SELECT	D.DEPARTMENT_NAME, J.JOB_TITLE, COUNT(*) "Num of employees"
-FROM 	employees E
-JOIN 	jobs J ON(E.JOB_ID = J.JOB_ID)
-JOIN 	departments D ON(E.DEPARTMENT_ID = D.DEPARTMENT_ID)
-GROUP BY D.DEPARTMENT_NAME,J.JOB_TITLE
-ORDER BY DEPARTMENT_NAME;
+SELECT		D.DEPARTMENT_NAME, J.JOB_TITLE, COUNT(*) "Num of employees"
+FROM 		employees E
+JOIN 		jobs J ON(E.JOB_ID = J.JOB_ID)
+JOIN 		departments D ON(E.DEPARTMENT_ID = D.DEPARTMENT_ID)
+GROUP BY 	D.DEPARTMENT_NAME, J.JOB_TITLE
+ORDER BY 	DEPARTMENT_NAME;
 ```
 
 f. For each employee, find the total number of employees those were hired before him/her. Print employee last name and total employees.
@@ -305,7 +305,7 @@ f. For each employee, find the total number of employees those were hired before
 ```sql
 SELECT 			E1.LAST_NAME, COUNT(DISTINCT E2.EMPLOYEE_ID) "Employees hired before"
 FROM 			employees E1
-LEFT OUTER JOIN employees E2 ON (E2.HIRE_DATE < E1.HIRE_DATE)
+LEFT OUTER JOIN 	employees E2 ON (E2.HIRE_DATE < E1.HIRE_DATE)
 GROUP BY 		E1.EMPLOYEE_ID, E1.LAST_NAME;
 ```
 
@@ -315,19 +315,19 @@ Print employee last name, total employees hired before him, and total employees 
 ```sql
 SELECT 			E1.LAST_NAME, COUNT(DISTINCT E2.EMPLOYEE_ID) "Employees hired before", COUNT(DISTINCT E3.EMPLOYEE_ID) "Employees hired after"
 FROM 			employees E1
-LEFT OUTER JOIN employees E2 ON (E2.HIRE_DATE < E1.HIRE_DATE)
-LEFT OUTER JOIN employees E3 ON (E3.HIRE_DATE > E1.HIRE_DATE)
+LEFT OUTER JOIN 	employees E2 ON (E2.HIRE_DATE < E1.HIRE_DATE)
+LEFT OUTER JOIN 	employees E3 ON (E3.HIRE_DATE > E1.HIRE_DATE)
 GROUP BY 		E1.EMPLOYEE_ID, E1.LAST_NAME;
 ```
 
 h. Find the employees having salaries greater than at least three other employees.
 
 ```sql
-SELECT 	E1.LAST_NAME, COUNT(DISTINCT E2.EMPLOYEE_ID) "Salary greater than"
-FROM 	employees E1
-JOIN 	employees E2 ON (E1.SALARY > E2.SALARY)
-GROUP BY E1.EMPLOYEE_ID, E1.LAST_NAME
-HAVING 	COUNT(DISTINCT E2.EMPLOYEE_ID) >= 3;
+SELECT 		E1.LAST_NAME, COUNT(DISTINCT E2.EMPLOYEE_ID) "Salary greater than"
+FROM 		employees E1
+JOIN 		employees E2 ON (E1.SALARY > E2.SALARY)
+GROUP BY 	E1.EMPLOYEE_ID, E1.LAST_NAME
+HAVING 		COUNT(DISTINCT E2.EMPLOYEE_ID) >= 3;
 ```
 
 i. For each employee, find his rank, i.e., position with respect to salary. The highest salaried employee should get rank 1 
@@ -364,26 +364,26 @@ Example 1.  Find information of those employees whose JOB_ID is same as the empl
 SALARY is greater than Abel’s SALARY.
 
 ```sql
-SELECT EMPLOYEE_ID, LAST_NAME, SALARY
-FROM employees
-WHERE JOB_ID = (
-    SELECT JOB_ID
-    FROM employees
-    WHERE EMPLOYEE_ID = 141
-)
-AND SALARY > (
-    SELECT SALARY
-    FROM employees
-    WHERE FIRST_NAME = 'Abel'
+SELECT 	EMPLOYEE_ID, LAST_NAME, SALARY
+FROM 	employees
+WHERE 	JOB_ID = (
+    	SELECT JOB_ID
+	FROM employees
+    	WHERE EMPLOYEE_ID = 141
+	)
+	AND SALARY > (
+    	SELECT SALARY
+	FROM employees
+    	WHERE FIRST_NAME = 'Abel'
 ); 
 ```
 
 Example 2. Find the employee who gets highest salary among all employees.
 
 ```sql
-SELECT EMPLOYEE_ID, LAST_NAME, SALARY
-FROM employees
-WHERE SALARY = (
+SELECT 	EMPLOYEE_ID, LAST_NAME, SALARY
+FROM 	employees
+WHERE 	SALARY = (
 	SELECT MAX(SALARY)
 	FROM employees
 ); 
@@ -394,10 +394,10 @@ whose SALARY is less than at least one employee of ‘IT_PROG’.
 
 
 ```sql
-SELECT EMPLOYEE_ID, LAST_NAME, SALARY
-FROM employees
-WHERE JOB_ID <> 'IT_PROG'
-AND SALARY < ANY (
+SELECT 	EMPLOYEE_ID, LAST_NAME, SALARY
+FROM 	employees
+WHERE 	JOB_ID <> 'IT_PROG'
+	AND SALARY < ANY (
 	SELECT SALARY
 	FROM employees
 	WHERE JOB_ID = 'IT_PROG'
@@ -409,9 +409,9 @@ AND SALARY < ANY (
 a. Find the last names of all employees that work in the SALES department.
 
 ```sql
-SELECT EMPLOYEE_ID, LAST_NAME
-FROM employees
-WHERE DEPARTMENT_ID = (
+SELECT 	EMPLOYEE_ID, LAST_NAME
+FROM 	employees
+WHERE 	DEPARTMENT_ID = (
 	SELECT DEPARTMENT_ID
 	FROM departments
 	WHERE DEPARTMENT_NAME = 'Sales'
@@ -422,9 +422,9 @@ b. Find the last names and salaries of those employees who get higher salary tha
 employee of SALES department
 
 ```sql
-SELECT LAST_NAME, SALARY
-FROM employees
-WHERE SALARY > ANY (
+SELECT 	LAST_NAME, SALARY
+FROM 	employees
+WHERE 	SALARY > ANY (
 	SELECT SALARY
 	FROM employees
 	WHERE DEPARTMENT_ID = (
@@ -439,9 +439,9 @@ c. Find the last names and salaries of those employees whose salary is higher th
 of SALES department.
 
 ```sql
-SELECT LAST_NAME, SALARY
-FROM employees
-WHERE SALARY > ALL (
+SELECT 	LAST_NAME, SALARY
+FROM 	employees
+WHERE 	SALARY > ALL (
 	SELECT SALARY
 	FROM employees
 	WHERE DEPARTMENT_ID = (
@@ -456,9 +456,9 @@ d. Find the last names and salaries of those employees whose salary is within ±
 average salary of SALES department
 
 ```sql
-SELECT LAST_NAME, SALARY
-FROM employees
-WHERE ABS(SALARY - (
+SELECT 	LAST_NAME, SALARY
+FROM 	employees
+WHERE 	ABS(SALARY - (
 	SELECT AVG(SALARY)
 	FROM employees
 	WHERE DEPARTMENT_ID = (
@@ -474,9 +474,9 @@ WHERE ABS(SALARY - (
 Example 1. Retrieve those employees whose salary is higher than at least three other employees.
 
 ```sql
-SELECT EMPLOYEE_ID, LAST_NAME, SALARY
-FROM employees E1
-WHERE 3 <= (
+SELECT 	EMPLOYEE_ID, LAST_NAME, SALARY
+FROM 	employees E1
+WHERE 	3 <= (
 	SELECT COUNT(*)
 	FROM employees E2
 	WHERE E2.SALARY < E1.SALARY
@@ -486,9 +486,9 @@ WHERE 3 <= (
 Example 2. Find those departments which have at least one employee having JOB_ID as ‘IT_PROG’.
 
 ```sql
-SELECT DEPARTMENT_NAME
-FROM departments D
-WHERE EXISTS (
+SELECT 	DEPARTMENT_NAME
+FROM 	departments D
+WHERE 	EXISTS (
 	SELECT *
 	FROM employees E
 	WHERE E.DEPARTMENT_ID = D.DEPARTMENT_ID AND E.JOB_ID = 'IT_PROG'
@@ -498,13 +498,13 @@ WHERE EXISTS (
 Example 3. Show the name of the employees who get highest salary in their department, along with department name.
 
 ```sql
-SELECT EMPLOYEE_ID, LAST_NAME, SALARY, (
+SELECT 	EMPLOYEE_ID, LAST_NAME, SALARY, (
 	SELECT DEPARTMENT_NAME
 	FROM departments D
 	WHERE E1.DEPARTMENT_ID = D.DEPARTMENT_ID
-) "Department Name"															
-FROM employees E1
-WHERE SALARY = (
+	) "Department Name"															
+FROM	employees E1
+WHERE 	SALARY = (
 	SELECT MAX(SALARY)
 	FROM employees E2
 	WHERE E2.DEPARTMENT_ID = E1.DEPARTMENT_ID
@@ -515,13 +515,13 @@ Example 4.  Show the last name and salary of each employee along with the
 minimum salary and maximum salary of his/her department. 
 
 ```sql
-SELECT E.LAST_NAME, E.SALARY, D.MINSAL, D.MAXSAL
-FROM EMPLOYEES E, (
-	SELECT DEPARTMENT_ID AS DEPT, MIN(SALARY) MINSAL, MAX(SALARY) MAXSAL
-	FROM EMPLOYEES
-	GROUP BY DEPARTMENT_ID
-) D
-WHERE (E.DEPARTMENT_ID = D.DEPT)
+SELECT 	E.LAST_NAME, E.SALARY, D.MINSAL, D.MAXSAL
+FROM 	EMPLOYEES E, (
+		SELECT DEPARTMENT_ID AS DEPT, MIN(SALARY) MINSAL, MAX(SALARY) MAXSAL
+		FROM EMPLOYEES
+		GROUP BY DEPARTMENT_ID
+	) D
+WHERE 	E.DEPARTMENT_ID = D.DEPT
 ORDER BY E.SALARY ;
 ```
 
