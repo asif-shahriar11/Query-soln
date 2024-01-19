@@ -1,4 +1,8 @@
-## Solution
+## Introduction
+
+'A brief Introduction to Oracle-SQL-PL SQL', written by Prof. Sukarna Barua, is a SQL practice book, used in DB Sessional Lab in CSE, BUET.
+
+
 
 ## Chapter 3: Single Row Functions
 
@@ -223,7 +227,7 @@ Example 2. Find the last name of manager for each employee.
 ```js
 SELECT E1.LAST_NAME EMPLOYEE, E2.LAST_NAME MANAGER
 FROM employees E1 JOIN employees E2
-On (E1.MANAGER_ID = E2.EMPLOYEE_ID);
+ON (E1.MANAGER_ID = E2.EMPLOYEE_ID);
 ```
 
 Example 3. Create a report showing last name of an
@@ -233,7 +237,7 @@ employee and a number which is the number of employees getting higher salary tha
 ```js
 SELECT E1.LAST_NAME NAME, COUNT(*) "Employees with Higher Salary"
 FROM employees E1 JOIN employees E2
-On (E1.SALARY < E2.SALARY)
+ON (E1.SALARY < E2.SALARY)
 GROUP BY E1.EMPLOYEE_ID, E1.LAST_NAME
 ORDER BY NAME;
 ```
@@ -255,7 +259,7 @@ a. For each employee print last name, salary, and job title.
 ```js
 SELECT E.LAST_NAME NAME, E.SALARY, J.JOB_TITLE
 FROM employees E JOIN jobs J
-On (E.JOB_ID = J.JOB_ID);
+ON (E.JOB_ID = J.JOB_ID);
 ```
 
 b. For each department, print department name and country name it is situated in.
@@ -292,7 +296,7 @@ e. For each department and job types, find the total number of employees working
 department names, job titles, and total employees working.
 
 ```js
-SELECT D.DEPARTMENT_NAME , J.JOB_TITLE , COUNT(*) "Num of employees"
+SELECT D.DEPARTMENT_NAME, J.JOB_TITLE, COUNT(*) "Num of employees"
 FROM employees E JOIN jobs J
 ON(E.JOB_ID = J.JOB_ID)
 JOIN departments D
@@ -301,7 +305,7 @@ GROUP BY D.DEPARTMENT_NAME,J.JOB_TITLE
 ORDER BY DEPARTMENT_NAME;
 ```
 
-f. For each employee, finds the total number of employees those were hired before him/her. Print employee last name and total employees.
+f. For each employee, find the total number of employees those were hired before him/her. Print employee last name and total employees.
 
 ```js
 SELECT E1.LAST_NAME, COUNT(DISTINCT E2.EMPLOYEE_ID) "Employees hired before"
@@ -310,7 +314,7 @@ ON (E2.HIRE_DATE < E1.HIRE_DATE)
 GROUP BY E1.EMPLOYEE_ID, E1.LAST_NAME;
 ```
 
-g. For each employee, finds the total number of employees those were hired before him/her and those were hired after him/her. 
+g. For each employee, find the total number of employees those were hired before him/her and those were hired after him/her. 
 Print employee last name, total employees hired before him, and total employees hired after him.
 
 ```js
@@ -332,7 +336,7 @@ GROUP BY E1.EMPLOYEE_ID, E1.LAST_NAME
 HAVING COUNT(DISTINCT E2.EMPLOYEE_ID) >= 3;
 ```
 
-i. i. For each employee, find his rank, i.e., position with respect to salary. The highest salaried employee should get rank 1 
+i. For each employee, find his rank, i.e., position with respect to salary. The highest salaried employee should get rank 1 
 and lowest salaried employee should get the last rank. Employees with same salary should get same rank value. 
 Print employee last names and his/he rank.
 
@@ -357,6 +361,275 @@ GROUP BY E1.EMPLOYEE_ID, E1.LAST_NAME, E1.SALARY
 HAVING COUNT(DISTINCT E2.EMPLOYEE_ID) <=2
 ORDER BY RANK ASC;
 ```
+
+## Chapter 6: Query Multiple Tables – Sub-query
+
+### 6.1: Sub-query
+
+Example 1.  Find information of those employees whose JOB_ID is same as the employee numbered 141 and whose
+SALARY is greater than Abel’s SALARY.
+
+```js
+SELECT EMPLOYEE_ID, LAST_NAME, SALARY
+FROM employees
+WHERE JOB_ID = (
+    SELECT JOB_ID
+    FROM employees
+    WHERE EMPLOYEE_ID = 141
+)
+AND SALARY > (
+    SELECT SALARY
+    FROM employees
+    WHERE FIRST_NAME = 'Abel'
+); 
+```
+
+Example 2. Find the employee who gets highest salary among all employees.
+
+```js
+SELECT EMPLOYEE_ID, LAST_NAME, SALARY
+FROM employees
+WHERE SALARY = (
+	SELECT MAX(SALARY)
+	FROM employees
+); 
+```
+
+Example 3. Find those employee records (working in other than ‘IT_PROG’ department) 
+whose SALARY is less than at least one employee of ‘IT_PROG’.
+
+
+```js
+SELECT EMPLOYEE_ID, LAST_NAME, SALARY
+FROM employees
+WHERE JOB_ID <> 'IT_PROG'
+AND SALARY < ANY (
+	SELECT SALARY
+	FROM employees
+	WHERE JOB_ID = 'IT_PROG'
+); 
+```
+
+#### Exercise
+
+a. Find the last names of all employees that work in the SALES department.
+
+```js
+SELECT EMPLOYEE_ID, LAST_NAME
+FROM employees
+WHERE DEPARTMENT_ID = (
+	SELECT DEPARTMENT_ID
+	FROM departments
+	WHERE DEPARTMENT_NAME = 'Sales'
+); 
+```
+
+b. Find the last names and salaries of those employees who get higher salary than at least one
+employee of SALES department
+
+```js
+SELECT LAST_NAME, SALARY
+FROM employees
+WHERE SALARY > ANY (
+	SELECT SALARY
+	FROM employees
+	WHERE DEPARTMENT_ID = (
+		SELECT DEPARTMENT_ID
+		FROM departments
+		WHERE DEPARTMENT_NAME = 'Sales'
+	)
+);
+```
+
+c. Find the last names and salaries of those employees whose salary is higher than all employees
+of SALES department.
+
+```js
+SELECT LAST_NAME, SALARY
+FROM employees
+WHERE SALARY > ALL (
+	SELECT SALARY
+	FROM employees
+	WHERE DEPARTMENT_ID = (
+		SELECT DEPARTMENT_ID
+		FROM departments
+		WHERE DEPARTMENT_NAME = 'Sales'
+	)
+);
+```
+
+d. Find the last names and salaries of those employees whose salary is within ± 5k of the
+average salary of SALES department
+
+```js
+SELECT LAST_NAME, SALARY
+FROM employees
+WHERE ABS(SALARY - (
+	SELECT AVG(SALARY)
+	FROM employees
+	WHERE DEPARTMENT_ID = (
+		SELECT DEPARTMENT_ID
+		FROM departments
+		WHERE DEPARTMENT_NAME = 'Sales'
+	)
+) <= 5000;
+```
+
+### 6.2: Advanced Sub-query
+
+Example 1. Retrieve those employees whose salary is higher than at least three other employees.
+
+```js
+SELECT EMPLOYEE_ID, LAST_NAME, SALARY
+FROM employees E1
+WHERE 3 <= (
+	SELECT COUNT(*)
+	FROM employees E2
+	WHERE E2.SALARY < E1.SALARY
+); 
+```
+
+Example 2. Find those departments which have at least one employee having JOB_ID as ‘IT_PROG’.
+
+```js
+SELECT DEPARTMENT_NAME
+FROM departments D
+WHERE EXISTS (
+	SELECT *
+	FROM employees E
+	WHERE E.DEPARTMENT_ID = D.DEPARTMENT_ID AND E.JOB_ID = 'IT_PROG'
+); 
+```
+
+Example 3. Show the name of the employees who get highest salary in their department, along with department name.
+
+```js
+SELECT EMPLOYEE_ID, LAST_NAME, SALARY, (
+	SELECT DEPARTMENT_NAME
+	FROM departments D
+	WHERE E1.DEPARTMENT_ID = D.DEPARTMENT_ID
+) "Department Name"															
+FROM employees E1
+WHERE SALARY = (
+	SELECT MAX(SALARY)
+	FROM employees E2
+	WHERE E2.DEPARTMENT_ID = E1.DEPARTMENT_ID
+); 
+```
+
+Example 4.  Show the last name and salary of each employee along with the
+minimum salary and maximum salary of his/her department. 
+
+```js
+SELECT E.LAST_NAME, E.SALARY, D.MINSAL, D.MAXSAL
+FROM EMPLOYEES E, (
+	SELECT DEPARTMENT_ID AS DEPT, MIN(SALARY) MINSAL, MAX(SALARY) MAXSAL
+	FROM EMPLOYEES
+	GROUP BY DEPARTMENT_ID
+) D
+WHERE (E.DEPARTMENT_ID = D.DEPT)
+ORDER BY E.SALARY ;
+```
+
+#### Exercise
+
+b. Find those departments whose average salary is greater than the minimum salary of all other
+departments. Print department names. Use sub-query. You can use join in the sub-queries.
+
+```js
+SELECT D1.DEPARTMENT_NAME, D2.AVG_SALARY 
+FROM departments D1, (
+	SELECT E1.DEPARTMENT_ID DEPT_ID, AVG(SALARY) AVG_SALARY
+	FROM employees E1
+	GROUP BY E1.DEPARTMENT_ID
+) D2
+WHERE D1.DEPARTMENT_ID = D2.DEPT_ID
+AND D2.AVG_SALARY > ANY (
+	SELECT SALARY
+	FROM employees E2
+);		
+```
+
+c. Find those department names which have the highest number of employees in service. Print
+department names. Use sub-query. You can use join in the sub-queries.
+
+```js
+SELECT D1.DEPARTMENT_NAME, D2.EMP_COUNT
+FROM departments D1, (
+	SELECT E1.DEPARTMENT_ID DEPT_ID, COUNT(DISTINCT E1.EMPLOYEE_ID) EMP_COUNT
+	FROM employees E1
+	GROUP BY E1.DEPARTMENT_ID
+) D2
+WHERE D1.DEPARTMENT_ID = D2.DEPT_ID
+AND D2.EMP_COUNT > ALL (
+	SELECT COUNT(DISTINCT E2.EMPLOYEE_ID)
+	FROM employees E2
+	WHERE E2.DEPARTMENT_ID <> D1.DEPARTMENT_ID
+	GROUP BY E2.DEPARTMENT_ID
+);	
+```
+
+An optimized version which uses join in main query:
+
+```js
+SELECT 
+    E1.DEPARTMENT_ID, 
+    D.DEPARTMENT_NAME
+FROM 
+    EMPLOYEES E1
+JOIN 
+    DEPARTMENTS D ON E1.DEPARTMENT_ID = D.DEPARTMENT_ID
+WHERE 
+    (
+        SELECT COUNT(*)
+        FROM EMPLOYEES E2
+        WHERE E2.DEPARTMENT_ID = E1.DEPARTMENT_ID
+    ) = 
+    (
+        SELECT MAX(CNT)
+        FROM (SELECT DEPARTMENT_ID, COUNT(*) CNT FROM EMPLOYEES GROUP BY DEPARTMENT_ID) D_COUNT
+    )
+GROUP BY 
+    E1.DEPARTMENT_ID, D.DEPARTMENT_NAME;
+
+```
+
+d. Find those employees who worked in more than one department in the company. Print
+employee last names. You cannot use join in the main query. Use sub-query. You can use join
+in the sub-queries.
+
+```js
+SELECT EMPLOYEE_ID
+FROM JOB_HISTORY J1
+WHERE 1 < (
+	SELECT COUNT(DISTINCT DEPARTMENT_ID)
+	FROM JOB_HISTORY J2
+	WHERE J1.EMPLOYEE_ID = J2.EMPLOYEE_ID
+);
+```
+
+f. For each job type, find the employee who gets the highest salary. Print job title and last name
+of the employee. Assume that there is one and only one such employee for every job type.
+
+```sql
+SELECT 
+    E.JOB_ID, 
+    J.JOB_TITLE,
+    E.LAST_NAME,
+    MAX(E.SALARY) AS MAX_SALARY
+FROM 
+    EMPLOYEES E
+INNER JOIN 
+    JOBS J ON E.JOB_ID = J.JOB_ID
+GROUP BY 
+    E.JOB_ID, J.JOB_TITLE, E.LAST_NAME
+ORDER BY 
+    E.JOB_ID;
+```
+
+
+
+
 
 
 
